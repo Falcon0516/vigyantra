@@ -444,7 +444,7 @@ export default function HeroScrub() {
         </div>
 
         {/* Mobile Top Simulation (Red Area) */}
-        <div className="absolute top-16 left-0 w-full h-[25vh] md:hidden z-10 pointer-events-none">
+        <div className="absolute top-16 left-0 w-full h-[25vh] md:hidden z-10 pointer-events-auto">
           <VigyantraSimulation
             progress={scrubProgress}
             isLoaded={isLoaded}

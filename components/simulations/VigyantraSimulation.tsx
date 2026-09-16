@@ -187,8 +187,8 @@ function HudCorner({
     <div
       className="absolute pointer-events-none select-none"
       style={{
-        ...(isTop ? { top: 10 } : { bottom: 10 }),
-        ...(isLeft ? { left: 10 } : { right: 10 }),
+        ...(isTop ? { top: 12 } : { bottom: 28 }),
+        ...(isLeft ? { left: 12 } : { right: 12 }),
       }}
     >
       <div style={bracketStyle} />
@@ -775,7 +775,7 @@ export default function VigyantraSimulation({ progress, isLoaded }: VigyantraSim
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden pt-12"
+      className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden pt-4"
       onPointerMove={onContainerPointerMove}
       onPointerLeave={resetNameTilt}
       onPointerDown={onContainerPointerDown}
@@ -834,18 +834,6 @@ export default function VigyantraSimulation({ progress, isLoaded }: VigyantraSim
               isShattering={isShattering}
             />
           ))}
-
-          {isHighlighted && !prefersReducedMotion && (
-            <div
-              className="absolute inset-0 pointer-events-none mix-blend-overlay"
-              style={{
-                background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.8), transparent)',
-                height: '20%',
-                width: '100%',
-                animation: 'scan-vertical 3s linear infinite',
-              }}
-            />
-          )}
         </h2>
 
         <div
@@ -858,7 +846,7 @@ export default function VigyantraSimulation({ progress, isLoaded }: VigyantraSim
 
       {/* Dynamic quotes */}
       <div
-        className="relative z-10 h-12 mt-6 w-full flex items-center justify-center px-4 text-center cursor-pointer"
+        className="relative z-10 h-10 mt-3 w-full flex items-center justify-center px-4 text-center cursor-pointer"
         onClick={advanceQuoteManually}
         role="button"
         tabIndex={0}
