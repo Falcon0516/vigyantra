@@ -96,66 +96,41 @@ export function getDeviceTier(): DeviceTier {
 
 /**
  * Map a device tier to concrete configuration values.
+ *
+ * ALL tiers now load the full 330 frames. The only difference
+ * is batchConcurrency (loading speed), canvasDprCap (render quality),
+ * and gateFrameCount (how many frames must load before we unlock scrolling).
+ *
+ * 330 mobile webp frames ≈ 5MB network, ≈300MB decoded RAM.
+ * Any 4GB+ device handles this comfortably.
  */
 export function getTierConfig(tier?: DeviceTier): TierConfig {
   const t = tier ?? getDeviceTier();
-  const isMobile = isMobileViewport();
-
-  // ─────────────────────────────────────────────────────────────
-  // IMPORTANT: gateFrameCount MUST cover the full "intro" scroll
-  // segment (the first 30% of scroll, i.e. INTRO_END in HeroScrub).
-  // For a unifiedFrameCount of N, the intro segment consumes
-  // floor(N * 150/330) frames. If gateFrameCount is smaller than
-  // that, scrubbing through the intro on a device that hasn't
-  // finished background-loading yet will run past the guaranteed
-  // window and freeze on the last drawn frame until the loader
-  // catches up — this was the cause of the "stuck at the start,
-  // then smooth" bug seen on iPhone. Fast/high-core devices raced
-  // ahead of it and masked the bug; slower ones exposed it.
-  //
-  // windowSize MUST be >= unifiedFrameCount for the mobile tiers
-  // too (it already is for HIGH desktop). All the mobile frame
-  // sets here are small (44-88 frames of 640x360 webp, a few KB
-  // each) so holding all of them decoded is cheap on every device,
-  // including low-end Android — evicting and re-decoding frames
-  // mid-scrub is what caused the "stutter scrolling back and forth"
-  // bug, since a scrub gesture routinely re-crosses the same
-  // frames in both directions.
-  // ─────────────────────────────────────────────────────────────
 
   switch (t) {
     case 'HIGH':
-      if (isMobile) {
-        return {
-          unifiedFrameCount: 88,
-          batchConcurrency: 10,
-          canvasDprCap: 2,
-          windowSize: 88,
-          gateFrameCount: 88,
-        };
-      }
       return {
         unifiedFrameCount: 330,
         batchConcurrency: 12,
         canvasDprCap: 2,
         windowSize: 330,
-        gateFrameCount: 60,
+        gateFrameCount: 60,  // Fast devices: unlock early, stream the rest
       };
     case 'MEDIUM':
       return {
-        unifiedFrameCount: 66,
-        batchConcurrency: 6,
+        unifiedFrameCount: 330,
+        batchConcurrency: 8,
         canvasDprCap: 1,
-        windowSize: 66,
-        gateFrameCount: 66,
+        windowSize: 330,
+        gateFrameCount: 80,  // Wait a bit longer so intro is guaranteed smooth
       };
     case 'LOW':
       return {
-        unifiedFrameCount: 44,
-        batchConcurrency: 3,
+        unifiedFrameCount: 330,
+        batchConcurrency: 4,
         canvasDprCap: 1,
-        windowSize: 44,
-        gateFrameCount: 44,
+        windowSize: 330,
+        gateFrameCount: 100, // Conservative: ensure plenty of frames before unlock
       };
   }
 }
