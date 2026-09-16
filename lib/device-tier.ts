@@ -127,11 +127,11 @@ export function getTierConfig(tier?: DeviceTier): TierConfig {
     case 'HIGH':
       if (isMobile) {
         return {
-          unifiedFrameCount: 330,
+          unifiedFrameCount: 88,
           batchConcurrency: 10,
           canvasDprCap: 2,
-          windowSize: 330,
-          gateFrameCount: 330,
+          windowSize: 88,
+          gateFrameCount: 88,
         };
       }
       return {
@@ -139,23 +139,23 @@ export function getTierConfig(tier?: DeviceTier): TierConfig {
         batchConcurrency: 12,
         canvasDprCap: 2,
         windowSize: 330,
-        gateFrameCount: 330,
+        gateFrameCount: 60,
       };
     case 'MEDIUM':
       return {
-        unifiedFrameCount: 330,
+        unifiedFrameCount: 66,
         batchConcurrency: 6,
         canvasDprCap: 1,
-        windowSize: 330,
-        gateFrameCount: 330,
+        windowSize: 66,
+        gateFrameCount: 66,
       };
     case 'LOW':
       return {
-        unifiedFrameCount: 330,
+        unifiedFrameCount: 44,
         batchConcurrency: 3,
         canvasDprCap: 1,
-        windowSize: 330,
-        gateFrameCount: 330,
+        windowSize: 44,
+        gateFrameCount: 44,
       };
   }
 }

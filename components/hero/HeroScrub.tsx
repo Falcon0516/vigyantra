@@ -315,19 +315,23 @@ export default function HeroScrub() {
       const campusCount = 180; // Original campus count
       const totalFrames = introCount + campusCount;
       
-      let idx = 0;
+      // Calculate the scaled index mapped to the configured frame count
+      const scaledIntroCount = Math.floor(config.unifiedFrameCount * (150 / 330));
+      const scaledCampusCount = config.unifiedFrameCount - scaledIntroCount;
+      
+      let scaledIdx = 0;
       if (progress <= INTRO_END) {
         const p = Math.min(progress / INTRO_END, 1);
-        idx = Math.min(Math.floor(p * introCount), introCount - 1);
+        scaledIdx = Math.min(Math.floor(p * scaledIntroCount), scaledIntroCount - 1);
       } else {
         const p = Math.min((progress - INTRO_END) / (1 - INTRO_END), 1);
-        idx = introCount + Math.min(Math.floor(p * campusCount), campusCount - 1);
+        scaledIdx = scaledIntroCount + Math.min(Math.floor(p * scaledCampusCount), scaledCampusCount - 1);
       }
       
-      idx = Math.max(0, Math.min(idx, totalFrames - 1));
+      scaledIdx = Math.max(0, Math.min(scaledIdx, config.unifiedFrameCount - 1));
 
-      drawSafeFrame(ctx, unifiedMgr, idx, lastDrawnUnifiedRef, cw, ch);
-      unifiedMgr.ensureWindow(idx);
+      drawSafeFrame(ctx, unifiedMgr, scaledIdx, lastDrawnUnifiedRef, cw, ch);
+      unifiedMgr.ensureWindow(scaledIdx);
     },
     [drawSafeFrame]
   );
@@ -378,10 +382,13 @@ export default function HeroScrub() {
 
     debugLog(`Device tier: ${tier}`, config);
 
-    // Build unified frame source list
+    // Build unified frame source list with equalized density
     const unifiedSrcs: string[] = [];
+    const step = tier === 'HIGH' ? 1 : Math.max(1, Math.floor(330 / config.unifiedFrameCount));
+    
     for (let i = 0; i < config.unifiedFrameCount; i++) {
-      unifiedSrcs.push(getUnifiedFrameSrc(i + 1, isMobile));
+      const frameNum = tier === 'HIGH' ? (i + 1) : (i * step + 1);
+      unifiedSrcs.push(getUnifiedFrameSrc(Math.min(frameNum, 330), isMobile));
     }
 
     const totalFrames = unifiedSrcs.length;
@@ -483,6 +490,8 @@ export default function HeroScrub() {
     drawFrame(0);
 
     const timeline = content.heroOverlayTimeline;
+
+    ScrollTrigger.config({ ignoreMobileResize: true });
 
     const trigger = ScrollTrigger.create({
       trigger: container,
