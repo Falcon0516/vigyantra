@@ -117,7 +117,7 @@ export default function HeroScrub() {
     // Cover-fit the image into the canvas
     const iw = source.naturalWidth;
     const ih = source.naturalHeight;
-    const scale = Math.max(cw / iw, ch / ih);
+    const scale = Math.min(cw / iw, ch / ih);
     const dw = Math.round(iw * scale);
     const dh = Math.round(ih * scale);
     const dx = Math.round((cw - dw) / 2);
