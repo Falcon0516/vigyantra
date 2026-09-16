@@ -15,6 +15,7 @@ export default function Navbar({ onRegisterClick }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrubFinished, setIsScrubFinished] = useState(false);
   const { site } = content;
 
   useEffect(() => {
@@ -44,7 +45,22 @@ export default function Navbar({ onRegisterClick }: NavbarProps) {
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll(); // sync initial state
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    const handleScrubEnd = (e: Event) => {
+      const customEvent = e as CustomEvent<boolean>;
+      setIsScrubFinished(customEvent.detail);
+    };
+    
+    // Also initially check scrollY in case of mid-page load
+    if (window.scrollY > window.innerHeight * 4) {
+      setIsScrubFinished(true);
+    }
+
+    window.addEventListener('hero-scrub-end', handleScrubEnd);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('hero-scrub-end', handleScrubEnd);
+    };
   }, []);
 
   // Lock body scroll when mobile menu is open
@@ -79,7 +95,11 @@ export default function Navbar({ onRegisterClick }: NavbarProps) {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           {/* Logo */}
-          <a href="#" className="cursor-interact group flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
+          <a 
+            href="#" 
+            className={`cursor-interact group flex items-center transition-opacity duration-700 ${isScrubFinished ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
             <Image
               src="/vigyantra-logo.png"
               alt="Vigyantra Logo"

@@ -2,25 +2,46 @@
 
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
-import { motion, useAnimation, useReducedMotion } from 'framer-motion';
+import { motion, useAnimation, useReducedMotion, AnimatePresence } from 'framer-motion';
 
 interface VigyantraSimulationProps {
   progress: number;
   isLoaded: boolean;
 }
 
+const QUOTES = [
+  { text: 'INNOVATE. CREATE. INSPIRE.', label: "VIGYANTRA '24" },
+  { text: 'TRAIN YOUR NEURAL NETWORKS', label: 'AI PROMPT BATTLE' },
+  { text: 'PASS THE BATON, NOT THE BUG', label: 'CODE RELAY' },
+  { text: 'EVERY SYSTEM HAS A SEAM', label: 'HACK & HUNT' },
+  { text: 'IDEAS, COMPILED TO INSTALL', label: 'APPFORGE' },
+  { text: 'SECURE THE MAINFRAME', label: 'ZEROCRYPT CTF' },
+  { text: 'FROM SPARK TO PROTOTYPE', label: 'INNOVATION MARATHON' },
+];
+
 export default function VigyantraSimulation({ progress, isLoaded }: VigyantraSimulationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  
+  const [quoteIndex, setQuoteIndex] = useState(0);
   
   // Interactive tilt and glow state
   const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 });
   const [isHovering, setIsHovering] = useState(false);
   const controls = useAnimation();
 
+  // Rotate quotes
+  useEffect(() => {
+    if (!isLoaded) return;
+    const interval = setInterval(() => {
+      setQuoteIndex((prev) => (prev + 1) % QUOTES.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [isLoaded]);
+
   // Subtle floating animation when not interacting
   useEffect(() => {
-    if (isLoaded && !isHovering && !prefersReducedMotion) {
+    if (isLoaded && !isHovering && !prefersReducedMotion && progress < 0.8) {
       controls.start({
         y: [0, -6, 0],
         transition: {
@@ -33,7 +54,7 @@ export default function VigyantraSimulation({ progress, isLoaded }: VigyantraSim
       controls.stop();
       controls.start({ y: 0, transition: { duration: 0.5 } });
     }
-  }, [isLoaded, isHovering, controls, prefersReducedMotion]);
+  }, [isLoaded, isHovering, controls, prefersReducedMotion, progress]);
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (prefersReducedMotion) return;
@@ -55,13 +76,22 @@ export default function VigyantraSimulation({ progress, isLoaded }: VigyantraSim
   const rotateX = (mousePosition.y - 0.5) * -30;
   const rotateY = (mousePosition.x - 0.5) * 30;
 
-  // Fade out as progress reaches the end
-  const isHighlighted = progress < 0.98;
+  // Transition to top left as progress nears 1
+  const transitionStart = 0.85;
+  const t = Math.max(0, Math.min(1, (progress - transitionStart) / (1 - transitionStart))); // 0 to 1
+  
+  // As t -> 1, move to top left and scale down, then fade out
+  const moveX = t * -40; // vw shift (approx)
+  const moveY = t * -40; // vh shift (approx)
+  const logoScale = 1 - (t * 0.4);
+  const logoOpacity = isLoaded ? (progress > 0.98 ? 0 : 1 - (t * 0.5)) : 0;
+  
+  const currentQuote = QUOTES[quoteIndex];
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full flex items-center justify-center overflow-hidden touch-none"
+      className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden touch-none pt-4"
       onPointerMove={handlePointerMove}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
@@ -84,10 +114,13 @@ export default function VigyantraSimulation({ progress, isLoaded }: VigyantraSim
 
       {/* Main Logo Container with 3D Tilt */}
       <motion.div
-        className="relative z-10"
+        className="relative z-10 flex flex-col items-center"
         style={{
           perspective: 1200,
-          opacity: isLoaded && isHighlighted ? 1 : 0,
+          opacity: logoOpacity,
+          x: `${moveX}vw`,
+          y: `${moveY}vh`,
+          scale: logoScale,
         }}
         animate={controls}
       >
@@ -128,6 +161,27 @@ export default function VigyantraSimulation({ progress, isLoaded }: VigyantraSim
             />
           </div>
         </motion.div>
+        
+        {/* Dynamic Quotes and Event Names */}
+        <div className="mt-8 h-16 flex flex-col items-center justify-center overflow-hidden" style={{ opacity: 1 - (t * 2) }}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={quoteIndex}
+              initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="flex flex-col items-center text-center pointer-events-none"
+            >
+              <span className="font-mono text-[10px] sm:text-xs tracking-[0.25em] text-[#D4AF7A] mb-1.5 opacity-80 uppercase">
+                {currentQuote.label}
+              </span>
+              <span className="font-serif text-sm sm:text-base tracking-widest text-[#F5F3EE] uppercase" style={{ textShadow: '0 0 10px rgba(212,175,122,0.3)' }}>
+                {currentQuote.text}
+              </span>
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </motion.div>
 
       {/* Minimal Ambient Particles */}

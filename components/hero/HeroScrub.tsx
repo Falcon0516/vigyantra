@@ -318,10 +318,15 @@ export default function HeroScrub() {
       // NO anticipatePin — it causes scroll position fights on iOS
       onUpdate: (self) => {
         const progress = self.progress;
+        
+        if (progress >= 0.98 && lastProgressRef.current < 0.98) {
+          window.dispatchEvent(new CustomEvent('hero-scrub-end', { detail: true }));
+        } else if (progress < 0.98 && lastProgressRef.current >= 0.98) {
+          window.dispatchEvent(new CustomEvent('hero-scrub-end', { detail: false }));
+        }
+
         lastProgressRef.current = progress;
         
-        // Only update state if it changed by at least 1% to avoid excessive re-renders
-        // Wait, actually, let's just update it if the percentage changed
         const currentPercent = Math.round(progress * 100);
         const lastPercent = Math.round((lastProgressRef.current || 0) * 100);
         
