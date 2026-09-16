@@ -260,11 +260,11 @@ export default function HeroScrub() {
   /* ─── Canvas draw helpers ─── */
   const drawImageToCanvas = useCallback(
     (ctx: CanvasRenderingContext2D, source: FrameData, cw: number, ch: number) => {
-      if (!source) return;
+      if (!source) return false;
 
       let iw: number, ih: number;
       if (source instanceof HTMLImageElement) {
-        if (!source.complete || source.naturalWidth === 0) return;
+        if (!source.complete || source.naturalWidth === 0) return false;
         iw = source.naturalWidth;
         ih = source.naturalHeight;
       } else {
@@ -273,9 +273,12 @@ export default function HeroScrub() {
       }
 
       const scale = Math.min(cw / iw, ch / ih);
-      const dw = iw * scale;
-      const dh = ih * scale;
-      ctx.drawImage(source, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+      const dw = Math.round(iw * scale);
+      const dh = Math.round(ih * scale);
+      const dx = Math.round((cw - dw) / 2);
+      const dy = Math.round((ch - dh) / 2);
+      ctx.drawImage(source, dx, dy, dw, dh);
+      return true;
     },
     []
   );
@@ -291,11 +294,11 @@ export default function HeroScrub() {
       alpha: number = 1
     ) => {
       const source = mgr.getFrame(index);
-      ctx.globalAlpha = alpha;
+      if (alpha !== 1) ctx.globalAlpha = alpha;
 
       if (source) {
-        drawImageToCanvas(ctx, source, cw, ch);
-        lastDrawnRef.current = index;
+        const drew = drawImageToCanvas(ctx, source, cw, ch);
+        if (drew) lastDrawnRef.current = index;
       } else {
         // Frame not yet loaded — draw closest available fallback
         if (DEBUG) debugLog(`Fallback triggered! Missing frame ${index}, using ${lastDrawnRef.current}`);
@@ -304,6 +307,8 @@ export default function HeroScrub() {
           drawImageToCanvas(ctx, fallback, cw, ch);
         }
       }
+      
+      if (alpha !== 1) ctx.globalAlpha = 1; // restore
     },
     [drawImageToCanvas]
   );
@@ -613,7 +618,7 @@ export default function HeroScrub() {
         <div
           ref={glowRef}
           className="absolute inset-0 pointer-events-none z-[5] hidden md:block"
-          style={{ opacity: 0, transition: 'opacity 0.5s ease-out', willChange: 'opacity', transform: 'translateZ(0)' }}
+          style={{ opacity: 0, willChange: 'opacity', transform: 'translateZ(0)' }}
         >
           <div
             className="absolute inset-0"
