@@ -181,22 +181,7 @@ class FrameManager {
       // Decode on background thread first
       try { await img.decode(); } catch {}
 
-      if (this.config.useOffscreenCache && this.isMobile) {
-        // Bake into offscreen canvas to prevent iOS WebKit eviction.
-        // Since img.decode() already completed, drawImage is instant and won't block the main thread.
-        const offscreen = document.createElement('canvas');
-        offscreen.width = img.naturalWidth;
-        offscreen.height = img.naturalHeight;
-        const oCtx = offscreen.getContext('2d');
-        if (oCtx) {
-          oCtx.drawImage(img, 0, 0);
-          this.frames[index] = offscreen;
-        } else {
-          this.frames[index] = img;
-        }
-      } else {
-        this.frames[index] = img;
-      }
+      this.frames[index] = img;
 
       this.totalLoaded++;
       this.onProgressUpdate?.(this.totalLoaded, this.srcs.length);
@@ -332,35 +317,17 @@ export default function HeroScrub() {
       
       let idx = 0;
       if (progress <= INTRO_END) {
-        // Map 0 -> INTRO_END to intro frames
-        const p = progress / INTRO_END;
+        const p = Math.min(progress / INTRO_END, 1);
         idx = Math.min(Math.floor(p * introCount), introCount - 1);
       } else {
-        // Map INTRO_END -> 1.0 to campus frames
-        const p = (progress - INTRO_END) / (1 - INTRO_END);
+        const p = Math.min((progress - INTRO_END) / (1 - INTRO_END), 1);
         idx = introCount + Math.min(Math.floor(p * campusCount), campusCount - 1);
       }
       
-      // Ensure we don't exceed the array bounds if config scaling is applied
       idx = Math.max(0, Math.min(idx, totalFrames - 1));
 
-      // Actually, since unifiedFrameCount might be scaled (LOW/MEDIUM tiers step by 5 or 3):
-      // The arrays are generated with scaled counts.
-      // So we map to the *scaled* index!
-      const scaledIntroCount = Math.floor(config.unifiedFrameCount * (150 / 330));
-      const scaledCampusCount = config.unifiedFrameCount - scaledIntroCount;
-      
-      let scaledIdx = 0;
-      if (progress <= INTRO_END) {
-        const p = Math.min(progress / INTRO_END, 1);
-        scaledIdx = Math.min(Math.floor(p * scaledIntroCount), scaledIntroCount - 1);
-      } else {
-        const p = Math.min((progress - INTRO_END) / (1 - INTRO_END), 1);
-        scaledIdx = scaledIntroCount + Math.min(Math.floor(p * scaledCampusCount), scaledCampusCount - 1);
-      }
-
-      drawSafeFrame(ctx, unifiedMgr, scaledIdx, lastDrawnUnifiedRef, cw, ch);
-      unifiedMgr.ensureWindow(scaledIdx);
+      drawSafeFrame(ctx, unifiedMgr, idx, lastDrawnUnifiedRef, cw, ch);
+      unifiedMgr.ensureWindow(idx);
     },
     [drawSafeFrame]
   );
@@ -411,13 +378,10 @@ export default function HeroScrub() {
 
     debugLog(`Device tier: ${tier}`, config);
 
-    // Build unified frame source list with equalized density
+    // Build unified frame source list
     const unifiedSrcs: string[] = [];
-    const step = tier === 'HIGH' ? 1 : Math.max(1, Math.floor(330 / config.unifiedFrameCount));
-    
     for (let i = 0; i < config.unifiedFrameCount; i++) {
-      const frameNum = tier === 'HIGH' ? (i + 1) : (i * step + 1);
-      unifiedSrcs.push(getUnifiedFrameSrc(Math.min(frameNum, 330), isMobile));
+      unifiedSrcs.push(getUnifiedFrameSrc(i + 1, isMobile));
     }
 
     const totalFrames = unifiedSrcs.length;

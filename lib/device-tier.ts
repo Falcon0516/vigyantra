@@ -17,8 +17,6 @@ export interface TierConfig {
   batchConcurrency: number;
   /** Canvas devicePixelRatio cap */
   canvasDprCap: number;
-  /** Whether to bake decoded images into offscreen canvases (prevents iOS eviction) */
-  useOffscreenCache: boolean;
   /** How many frames ahead/behind current index to keep decoded */
   windowSize: number;
   /** Minimum frames needed before unlocking the loading gate */
@@ -129,39 +127,35 @@ export function getTierConfig(tier?: DeviceTier): TierConfig {
     case 'HIGH':
       if (isMobile) {
         return {
-          unifiedFrameCount: 88, // 40 + 48
+          unifiedFrameCount: 330,
           batchConcurrency: 10,
           canvasDprCap: 2,
-          useOffscreenCache: false,
-          windowSize: 88, // hold all frames — no eviction/re-decode thrash
-          gateFrameCount: 88, // full preload; tiny payload (~176KB) on mobile
+          windowSize: 330,
+          gateFrameCount: 330,
         };
       }
       return {
-        unifiedFrameCount: 330, // 150 + 180
+        unifiedFrameCount: 330,
         batchConcurrency: 12,
         canvasDprCap: 2,
-        useOffscreenCache: false,
-        windowSize: 330, // Large window to hold all frames
-        gateFrameCount: 60, // covers well past the intro's effective needs while starting fast
+        windowSize: 330,
+        gateFrameCount: 330,
       };
     case 'MEDIUM':
       return {
-        unifiedFrameCount: 66, // 30 + 36
+        unifiedFrameCount: 330,
         batchConcurrency: 6,
         canvasDprCap: 1,
-        useOffscreenCache: true,
-        windowSize: 66, // hold all frames — no eviction/re-decode thrash
-        gateFrameCount: 66, // full preload; ~132KB total on mobile
+        windowSize: 330,
+        gateFrameCount: 330,
       };
     case 'LOW':
       return {
-        unifiedFrameCount: 44, // 20 + 24
+        unifiedFrameCount: 330,
         batchConcurrency: 3,
         canvasDprCap: 1,
-        useOffscreenCache: true,
-        windowSize: 44, // hold all frames — no eviction/re-decode thrash
-        gateFrameCount: 44, // full preload; ~88KB total on mobile
+        windowSize: 330,
+        gateFrameCount: 330,
       };
   }
 }
