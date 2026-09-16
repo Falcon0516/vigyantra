@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 
 interface ParticleFieldProps {
   count?: number;
@@ -34,6 +34,16 @@ export default function ParticleField({
   const mouseRef = useRef({ x: -1000, y: -1000 });
   const animFrameRef = useRef<number>(0);
   const dimsRef = useRef({ w: 0, h: 0 }); // cached dimensions
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMobile(window.innerWidth < 768);
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize, { passive: true });
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const initParticles = useCallback((width: number, height: number, particleCount: number) => {
     const particles: Particle[] = [];
@@ -203,6 +213,8 @@ export default function ParticleField({
       }
     };
   }, [count, color, opacity, interactive, initParticles]);
+
+  if (isMobile) return null;
 
   return (
     <canvas

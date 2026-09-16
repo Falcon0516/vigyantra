@@ -313,7 +313,7 @@ export default function IsometricUISimulation({ color }: SimulationProps) {
     return () => {
       window.removeEventListener('resize', handleResize);
       if (canvasRef.current?.parentElement) {
-         // eslint-disable-next-line react-hooks/exhaustive-deps
+          
          canvasRef.current.parentElement.removeEventListener('mousemove', handleMouseMove);
          // eslint-disable-next-line react-hooks/exhaustive-deps
          canvasRef.current.parentElement.removeEventListener('mouseleave', handleMouseLeave);

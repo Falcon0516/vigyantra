@@ -84,7 +84,7 @@ export default function MatrixRelaySimulation({ color }: SimulationProps) {
         };
 
         const numChars = 10 + Math.floor(Math.random() * 20);
-        let currentY = Math.random() * state.height;
+        const currentY = Math.random() * state.height;
 
         for (let j = 0; j < numChars; j++) {
            const isKw = Math.random() > 0.8;
@@ -181,7 +181,7 @@ export default function MatrixRelaySimulation({ color }: SimulationProps) {
 
          // Wrap column
          if (col.chars[col.chars.length - 1].y > height + 100) {
-            let startY = -100;
+            const startY = -100;
             for (let i = 0; i < col.chars.length; i++) {
                col.chars[i].y = startY - i * 16;
                const isKw = Math.random() > 0.8;
@@ -268,7 +268,7 @@ export default function MatrixRelaySimulation({ color }: SimulationProps) {
             const ch = col.chars[i];
             if (ch.y < -20 || ch.y > height + 20) continue;
 
-            let alpha = ch.opacity * (1 - col.z * 0.5);
+            const alpha = ch.opacity * (1 - col.z * 0.5);
             let colorStr = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
 
             if (ch.highlight > 0) {

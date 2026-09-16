@@ -16,6 +16,7 @@ export default function IntroLoader() {
       sessionStorage.setItem('sjbit-intro-seen', '1');
       return;
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setShow(true);
 
     const timer = setTimeout(() => {
@@ -25,6 +26,21 @@ export default function IntroLoader() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (show) {
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    }
+    
+    return () => {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    };
+  }, [show]);
 
   return (
     <AnimatePresence>

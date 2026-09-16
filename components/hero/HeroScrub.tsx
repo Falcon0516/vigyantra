@@ -65,6 +65,7 @@ export default function HeroScrub() {
   /* ─── Reduced motion detection ─── */
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPrefersReducedMotion(mq.matches);
     const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
     mq.addEventListener('change', handler);
@@ -308,10 +309,9 @@ export default function HeroScrub() {
       start: 'top top',
       end: 'bottom bottom',
       pin: sticky,
-      // KEY FIX: scrub: true (instant, no smoothing)
-      // scrub: 0.35 was causing the "back and forth" oscillation on iOS
-      // because the lerp overshoots when momentum scroll fires rapid deltas
-      scrub: true,
+      // KEY FIX: For mobile/touch devices, a small scrub delay (0.5) helps absorb momentum scroll bumps,
+      // while on desktop (or hardware smooth-scroll), scrub: true prevents lag.
+      scrub: (typeof window !== 'undefined' && ('ontouchstart' in window)) ? 0.5 : true,
       fastScrollEnd: true,
       // NO anticipatePin — it causes scroll position fights on iOS
       onUpdate: (self) => {
@@ -374,11 +374,15 @@ export default function HeroScrub() {
   }
 
   return (
-    <section ref={containerRef} className="relative w-full bg-[#050506] h-[300dvh] md:h-[700dvh]">
+    <section 
+      ref={containerRef} 
+      className="relative w-full bg-[#050506] h-[500dvh] md:h-[700dvh]"
+      style={{ WebkitOverflowScrolling: 'touch' }}
+    >
       <div
         ref={stickyRef}
         className="w-full h-[100dvh] overflow-hidden relative"
-        style={{ transform: 'translateZ(0)', WebkitBackfaceVisibility: 'hidden' }}
+        style={{ transform: 'translateZ(0)', WebkitBackfaceVisibility: 'hidden', touchAction: 'pan-y' }}
       >
         {/* Ambient gold glow */}
         <div className="ambient-blob ambient-blob-gold w-[320px] h-[320px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-25" />

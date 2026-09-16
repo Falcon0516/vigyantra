@@ -2,6 +2,7 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
+import MobileSimFallback from '@/components/simulations/MobileSimFallback';
 
 interface EventSimulationProps {
   slug: string;
@@ -21,9 +22,17 @@ const InverseKinematicsSimulation = dynamic(() => import('@/components/simulatio
 
 export default function EventSimulation({ slug, color, className = '' }: EventSimulationProps) {
   const [shouldRender, setShouldRender] = React.useState(false);
+  const [isMobile, setIsMobile] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMobile(window.innerWidth < 768);
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize, { passive: true });
+
     const el = containerRef.current;
     if (!el) return;
 
@@ -35,11 +44,16 @@ export default function EventSimulation({ slug, color, className = '' }: EventSi
       { rootMargin: '150px' }
     );
     observer.observe(el);
-    return () => observer.disconnect();
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      observer.disconnect();
+    };
   }, []);
 
   const renderSimulation = () => {
     if (!shouldRender) return null;
+    if (isMobile) return <MobileSimFallback slug={slug} color={color} />;
     switch (slug) {
       case 'ai-prompt-battle':
         return <NeuralSimulation color={color} />;
