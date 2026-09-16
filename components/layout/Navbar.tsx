@@ -83,9 +83,9 @@ export default function Navbar({ onRegisterClick }: NavbarProps) {
             <Image
               src="/vigyantra-logo.png"
               alt="Vigyantra Logo"
-              width={200}
-              height={50}
-              className="w-auto h-7 sm:h-9 md:h-10 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105"
+              width={260}
+              height={65}
+              className="w-auto h-9 sm:h-12 md:h-14 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105"
               priority
             />
           </a>
