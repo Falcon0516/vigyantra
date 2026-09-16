@@ -27,12 +27,15 @@ export default function SmoothScrollProvider({ children }: SmoothScrollProviderP
     // Hijacking touch with JavaScript smooth-scroll causes severe touch latency and choppiness.
     const isTouchDevice = 'ontouchstart' in window || (navigator.maxTouchPoints > 0 && window.innerWidth < 1024);
     if (isTouchDevice) {
-      // DO NOT use normalizeScroll(true) on touch devices.
-      // It hijacks iOS's native hardware-accelerated momentum scrolling and replaces
-      // it with a JS-driven scroller that lacks natural deceleration — causing extreme
-      // scroll sensitivity and jank on iPhones.
-      // Instead: let iOS handle scroll natively, and just configure GSAP to play nice.
-      ScrollTrigger.config({ ignoreMobileResize: true });
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+        // Let iOS handle scroll natively for buttery smooth momentum.
+        // Hijacking it with normalizeScroll causes extreme sensitivity.
+        ScrollTrigger.config({ ignoreMobileResize: true });
+      } else {
+        // Android and other touch devices: normalizeScroll prevents getting stuck 
+        // during complex GSAP pins and scroll events.
+        ScrollTrigger.normalizeScroll(true);
+      }
       gsap.ticker.lagSmoothing(500, 33);
       return;
     }

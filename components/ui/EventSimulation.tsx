@@ -3,6 +3,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import MobileSimFallback from '@/components/simulations/MobileSimFallback';
+import { getDeviceTier } from '@/lib/device-tier';
 
 interface EventSimulationProps {
   slug: string;
@@ -28,9 +29,10 @@ export default function EventSimulation({ slug, color, className = '' }: EventSi
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
     
+    const checkIsMobileFallback = () => window.innerWidth < 768 && getDeviceTier() === 'LOW';
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsMobile(window.innerWidth < 768);
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    setIsMobile(checkIsMobileFallback());
+    const handleResize = () => setIsMobile(checkIsMobileFallback());
     window.addEventListener('resize', handleResize, { passive: true });
 
     const el = containerRef.current;

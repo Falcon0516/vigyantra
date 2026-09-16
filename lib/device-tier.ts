@@ -24,7 +24,7 @@ export interface TierConfig {
 }
 
 /** Detect whether we're on an iOS device (iPhone/iPad/iPod) */
-function isIOSDevice(): boolean {
+export function isIOSDevice(): boolean {
   if (typeof navigator === 'undefined') return false;
   return (
     /iPad|iPhone|iPod/.test(navigator.userAgent) ||
