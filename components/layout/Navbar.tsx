@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { content } from '@/lib/content';
 import { Menu, X } from 'lucide-react';
 import { ArrowRight } from '@/lib/event-icons';
@@ -78,16 +79,15 @@ export default function Navbar({ onRegisterClick }: NavbarProps) {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           {/* Logo */}
-          <a href="#" className="cursor-interact group flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
-            <span
-              className="font-serif text-xl sm:text-2xl tracking-tight"
-              style={{ color: '#D4AF7A' }}
-            >
-              XXV
-            </span>
-            <span className="hidden sm:block text-sm font-light text-[var(--color-foreground)] opacity-60 group-hover:opacity-100 transition-opacity">
-              TechFest
-            </span>
+          <a href="#" className="cursor-interact group flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
+            <Image
+              src="/vigyantra-logo.png"
+              alt="Vigyantra Logo"
+              width={200}
+              height={50}
+              className="w-auto h-7 sm:h-9 md:h-10 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105"
+              priority
+            />
           </a>
 
           {/* Center Links (Desktop) */}
