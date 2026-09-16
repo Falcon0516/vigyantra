@@ -117,16 +117,19 @@ function OverlayText({
       className="max-w-5xl"
     >
       <h1
-        className="font-serif text-2xl sm:text-5xl md:text-7xl lg:text-8xl mb-3 sm:mb-6 tracking-tight text-balance hero-heading-shadow animate-text-glow-pulse"
-        style={{ color: '#D4AF7A' }}
+        className="font-serif font-bold text-4xl sm:text-6xl md:text-7xl lg:text-9xl mb-3 sm:mb-6 tracking-tight text-balance animate-text-glow-pulse"
+        style={{ 
+          color: '#F5F3EE',
+          textShadow: '0 4px 40px rgba(0,0,0,0.9), 0 2px 10px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 122, 0.5)'
+        }}
       >
         {frame.heading}
       </h1>
       <p
-        className="text-xs sm:text-lg md:text-2xl tracking-wide font-light px-2 text-balance"
+        className="text-sm sm:text-xl md:text-3xl tracking-wide font-medium px-2 text-balance"
         style={{
-          color: 'rgba(212, 175, 122, 0.9)',
-          textShadow: '0 2px 20px rgba(0,0,0,0.5)',
+          color: '#E8C992',
+          textShadow: '0 4px 20px rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.8)',
         }}
       >
         {renderSub(frame.sub)}
