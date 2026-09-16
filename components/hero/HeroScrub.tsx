@@ -298,6 +298,7 @@ export default function HeroScrub() {
         lastDrawnRef.current = index;
       } else {
         // Frame not yet loaded — draw closest available fallback
+        if (DEBUG) debugLog(`Fallback triggered! Missing frame ${index}, using ${lastDrawnRef.current}`);
         const fallback = mgr.getFrame(lastDrawnRef.current);
         if (fallback) {
           drawImageToCanvas(ctx, fallback, cw, ch);
@@ -323,10 +324,6 @@ export default function HeroScrub() {
       const introCount = 150; // Original intro count
       const campusCount = 180; // Original campus count
       const totalFrames = introCount + campusCount;
-
-      ctx.clearRect(0, 0, cw, ch);
-      ctx.fillStyle = '#050506';
-      ctx.fillRect(0, 0, cw, ch);
       
       let idx = 0;
       if (progress <= INTRO_END) {
@@ -616,7 +613,7 @@ export default function HeroScrub() {
         <div
           ref={glowRef}
           className="absolute inset-0 pointer-events-none z-[5] hidden md:block"
-          style={{ opacity: 0, transition: 'opacity 0.5s ease-out' }}
+          style={{ opacity: 0, transition: 'opacity 0.5s ease-out', willChange: 'opacity', transform: 'translateZ(0)' }}
         >
           <div
             className="absolute inset-0"
