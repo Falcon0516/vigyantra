@@ -62,6 +62,7 @@ export default function HeroScrub() {
   const [loadProgress, setLoadProgress] = useState(0);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [activeTimelineIndex, setActiveTimelineIndex] = useState(-1);
+  const [scrubProgress, setScrubProgress] = useState(0);
 
   /* ─── Reduced motion detection ─── */
   useEffect(() => {
@@ -318,6 +319,13 @@ export default function HeroScrub() {
       onUpdate: (self) => {
         const progress = self.progress;
         lastProgressRef.current = progress;
+        
+        // Only update state if it changed by at least 1% to avoid excessive re-renders
+        // Wait, actually, let's just update it if the percentage changed
+        const currentPercent = Math.round(progress * 100);
+        const lastPercent = Math.round((lastProgressRef.current || 0) * 100);
+        
+        setScrubProgress(progress);
 
         // Text overlay sync
         const tIndex = timeline.findIndex(
@@ -438,7 +446,7 @@ export default function HeroScrub() {
         {/* Mobile Top Simulation (Red Area) */}
         <div className="absolute top-16 left-0 w-full h-[25vh] md:hidden z-10 pointer-events-none">
           <VigyantraSimulation
-            isHighlighted={activeTimelineIndex < content.heroOverlayTimeline.length - 1}
+            progress={scrubProgress}
             isLoaded={isLoaded}
           />
         </div>
