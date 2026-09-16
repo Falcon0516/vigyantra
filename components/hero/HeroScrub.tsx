@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import HeroOverlay from './HeroOverlay';
+import VigyantraSimulation from '../simulations/VigyantraSimulation';
 import Image from 'next/image';
 import { ChevronDown, ArrowDown } from 'lucide-react';
 import { content } from '@/lib/content';
@@ -434,6 +435,14 @@ export default function HeroScrub() {
           <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(212,175,122,0.08) 0%, transparent 30%, transparent 70%, rgba(212,175,122,0.06) 100%)' }} />
         </div>
 
+        {/* Mobile Top Simulation (Red Area) */}
+        <div className="absolute top-16 left-0 w-full h-[25vh] md:hidden z-10 pointer-events-none">
+          <VigyantraSimulation
+            isHighlighted={activeTimelineIndex < content.heroOverlayTimeline.length - 1}
+            isLoaded={isLoaded}
+          />
+        </div>
+
         {/* Gradient overlay */}
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-[#050506]/40 via-transparent to-[#050506]/60" />
 
@@ -446,7 +455,7 @@ export default function HeroScrub() {
             const eventsSection = document.getElementById('events');
             if (eventsSection) eventsSection.scrollIntoView({ behavior: 'smooth' });
           }}
-          className={`cursor-interact absolute bottom-16 sm:bottom-20 right-4 sm:right-8 z-20 group inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full text-[11px] sm:text-xs font-mono tracking-wider uppercase transition-all duration-1000 pointer-events-auto min-h-[44px] min-w-[44px] ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+          className={`cursor-interact absolute bottom-16 sm:bottom-20 left-1/2 -translate-x-1/2 z-20 group inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full text-[11px] sm:text-xs font-mono tracking-wider uppercase transition-all duration-1000 pointer-events-auto min-h-[44px] min-w-[44px] ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
           style={{
             background: 'rgba(5, 5, 6, 0.4)',
             backdropFilter: 'blur(16px)',

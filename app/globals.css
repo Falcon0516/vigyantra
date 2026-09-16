@@ -316,3 +316,12 @@ summary,
     text-shadow: 0 4px 40px rgba(0,0,0,0.6), 0 0 120px rgba(212,175,122,0.15);
   }
 }
+
+@keyframes text-glow-pulse {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(212, 175, 122, 0.4), 0 0 20px rgba(212, 175, 122, 0.2);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(212, 175, 122, 0.8), 0 0 40px rgba(212, 175, 122, 0.6), 0 0 60px rgba(212, 175, 122, 0.4);
+  }
+}
