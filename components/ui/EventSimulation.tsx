@@ -67,6 +67,7 @@ export default function EventSimulation({ slug, color, className = '' }: EventSi
         return <AppForgeSimulation color={color} />;
       case 'zerocrypt-ctf':
         return <CellularAutomataSimulation color={color} />;
+      case 'nexora':
       case 'innovation-marathon':
         return <KinematicGearsSimulation color={color} />;
       case 'green-tech-challenge':

@@ -31,7 +31,7 @@
       "icon": "BrainCircuit",
       "colorHex": "#C0392B",
       "bgTintHex": "#F3D9D6",
-      "exploreUrl": "https://REPLACE-ME.example.com/events/ai-prompt-battle"
+      "exploreUrl": "https://aipromptbattle.vercel.app"
     },
     {
       "id": "02",
@@ -42,7 +42,7 @@
       "icon": "Code2",
       "colorHex": "#3E6B96",
       "bgTintHex": "#D7E3EC",
-      "exploreUrl": "https://REPLACE-ME.example.com/events/code-relay"
+      "exploreUrl": "https://vigyantra-coderelay.vercel.app"
     },
     {
       "id": "03",
@@ -53,7 +53,7 @@
       "icon": "SearchCode",
       "colorHex": "#4C7A52",
       "bgTintHex": "#DCE7DC",
-      "exploreUrl": "https://REPLACE-ME.example.com/events/hack-and-hunt"
+      "exploreUrl": "https://hackandhunt.vercel.app"
     },
     {
       "id": "04",
@@ -64,7 +64,7 @@
       "icon": "Smartphone",
       "colorHex": "#C98A2E",
       "bgTintHex": "#F0E1C8",
-      "exploreUrl": "https://REPLACE-ME.example.com/events/appforge"
+      "exploreUrl": "https://appforge-cse.vercel.app"
     },
     {
       "id": "05",
@@ -79,14 +79,14 @@
     },
     {
       "id": "06",
-      "slug": "innovation-marathon",
-      "title": "Innovation Marathon",
-      "description": "Teams progress from problem identification to ideation, prototyping, testing and pitching over two days.",
-      "tags": ["IDEATE", "PROTOTYPE", "TEST", "PITCH"],
+      "slug": "nexora",
+      "title": "Nexora",
+      "description": "An intensive 8-hour college ideathon and rapid prototyping challenge across 10 innovation domains. Teams collaborate to engineer and pitch impactful solutions.",
+      "tags": ["IDEATHON", "PROTOTYPE", "INNOVATE", "PITCH"],
       "icon": "Lightbulb",
       "colorHex": "#D9714B",
       "bgTintHex": "#F2DCD1",
-      "exploreUrl": "https://REPLACE-ME.example.com/events/innovation-marathon"
+      "exploreUrl": "https://nexora.sjbit-nexora.workers.dev/"
     },
     {
       "id": "07",

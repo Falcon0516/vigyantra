@@ -16,7 +16,7 @@ const QUOTES = [
   { text: 'EVERY SYSTEM HAS A SEAM', label: 'HACK & HUNT' },
   { text: 'IDEAS, COMPILED TO INSTALL', label: 'APPFORGE' },
   { text: 'SECURE THE MAINFRAME', label: 'ZEROCRYPT CTF' },
-  { text: 'FROM SPARK TO PROTOTYPE', label: 'INNOVATION MARATHON' },
+  { text: 'FROM SPARK TO PROTOTYPE', label: 'NEXORA' },
 ];
 
 export default function VigyantraSimulation({ progress, isLoaded }: VigyantraSimulationProps) {

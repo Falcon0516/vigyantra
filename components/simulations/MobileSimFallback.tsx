@@ -77,6 +77,10 @@ const patterns: Record<string, (color: string) => React.CSSProperties> = {
     backgroundSize: '100% 4px',
     animation: 'sim-scanline 3s linear infinite',
   }),
+  'nexora': (color) => ({
+    background: `conic-gradient(from 0deg at 50% 50%, ${color}10, transparent 60%, ${color}08, transparent)`,
+    animation: 'sim-rotate 10s linear infinite',
+  }),
   'innovation-marathon': (color) => ({
     background: `conic-gradient(from 0deg at 50% 50%, ${color}10, transparent 60%, ${color}08, transparent)`,
     animation: 'sim-rotate 10s linear infinite',
