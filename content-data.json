@@ -138,7 +138,7 @@
       "icon": "ShieldCheck",
       "colorHex": "#6C5B9E",
       "bgTintHex": "#DCD6EC",
-      "exploreUrl": "https://REPLACE-ME.example.com/events/zerocrypt-ctf"
+      "exploreUrl": "https://zerocryptctf.vercel.app"
     },
     {
       "id": "06",
