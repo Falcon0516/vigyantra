@@ -170,7 +170,7 @@
       "icon": "Sprout",
       "colorHex": "#3F8F63",
       "bgTintHex": "#D6EADC",
-      "exploreUrl": "https://REPLACE-ME.example.com/events/green-tech-challenge"
+      "exploreUrl": "https://green-tech-challenge.netlify.app"
     },
     {
       "id": "08",
