@@ -8,7 +8,7 @@ import VigyantraSimulation from '../simulations/VigyantraSimulation';
 import Image from 'next/image';
 import { ChevronDown, ArrowDown } from 'lucide-react';
 import { content } from '@/lib/content';
-import { getDeviceTier, getTierConfig, type DeviceTier, type TierConfig } from '@/lib/device-tier';
+import { getDeviceTier, getTierConfig, isIOSDevice, type DeviceTier, type TierConfig } from '@/lib/device-tier';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -332,9 +332,25 @@ export default function HeroScrub() {
       start: 'top top',
       end: 'bottom bottom',
       pin: sticky,
-      // KEY FIX: For mobile/touch devices, a small scrub delay (0.5) helps absorb momentum scroll bumps,
-      // while on desktop (or hardware smooth-scroll), scrub: true prevents lag.
-      scrub: (typeof window !== 'undefined' && ('ontouchstart' in window)) ? 0.5 : true,
+      // iOS Safari delivers scroll events at a consistent 60fps during both
+      // active touch drag and momentum phases. Adding GSAP's scrub smoothing
+      // on top creates a double-smoothing effect: with scrub:0.5, each frame
+      // needs ~30 rAF callbacks (500ms) to advance 0.002 in progress, causing
+      // Math.floor to return the same frame index repeatedly → frames appear
+      // "stuck" during slow scrolling. scrub:true (no smoothing) is correct
+      // for iOS because Safari's own scroll delivery is already smooth.
+      //
+      // Android touch devices keep scrub:0.5 because their scroll event
+      // delivery can be more erratic and benefits from GSAP's smoothing.
+      // Desktop uses scrub:true (instant) as before.
+      scrub: (() => {
+        if (typeof window === 'undefined') return true;
+        const iOS = isIOSDevice();
+        const isTouch = 'ontouchstart' in window;
+        if (iOS) return true;           // iOS: no smoothing (Safari scroll is already smooth)
+        if (isTouch) return 0.5;        // Android touch: 0.5s smoothing
+        return true;                    // Desktop: no smoothing
+      })(),
       fastScrollEnd: true,
       // NO anticipatePin — it causes scroll position fights on iOS
       onUpdate: (self) => {
