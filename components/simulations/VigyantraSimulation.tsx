@@ -149,8 +149,17 @@ export default function VigyantraSimulation({ progress, isLoaded }: VigyantraSim
             }}
           />
 
-          {/* Actual Logo Image */}
-          <div className="relative pointer-events-none">
+          {/* Logo Row: SJBIT + Divider + Vigyantra */}
+          <div className="relative pointer-events-none flex items-center gap-2 sm:gap-3">
+            <Image
+              src="/sjbit-logo.jpg"
+              alt="SJBIT Silver Jubilee Logo"
+              width={120}
+              height={120}
+              className="w-auto h-10 sm:h-14 md:h-18 object-contain rounded-md drop-shadow-2xl"
+              priority
+            />
+            <span className="w-px self-stretch bg-[#D4AF7A]/30" />
             <Image
               src="/vigyantra-logo.png"
               alt="Vigyantra Logo"

@@ -97,9 +97,18 @@ export default function Navbar({ onRegisterClick }: NavbarProps) {
           {/* Logo */}
           <a 
             href="#" 
-            className={`cursor-interact group flex items-center transition-opacity duration-700 ${isScrubFinished ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
+            className={`cursor-interact group flex items-center gap-2 sm:gap-3 transition-opacity duration-700 ${isScrubFinished ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
             onClick={() => setIsMobileMenuOpen(false)}
           >
+            <Image
+              src="/sjbit-logo.jpg"
+              alt="SJBIT Silver Jubilee Logo"
+              width={120}
+              height={120}
+              className="w-auto h-8 sm:h-11 md:h-13 object-contain rounded-md drop-shadow-md transition-transform duration-300 group-hover:scale-105"
+              priority
+            />
+            <span className="w-px self-stretch bg-[#D4AF7A]/30" />
             <Image
               src="/vigyantra-logo.png"
               alt="Vigyantra Logo"

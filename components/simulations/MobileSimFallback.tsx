@@ -64,6 +64,17 @@ const patterns: Record<string, (color: string) => React.CSSProperties> = {
     backgroundPosition: '0 0, 0 20px, 20px -20px, 20px 0',
     animation: 'sim-float 8s ease-in-out infinite',
   }),
+  'appforge': (color) => ({
+    background: `
+      linear-gradient(135deg, ${color}08 25%, transparent 25%),
+      linear-gradient(225deg, ${color}06 25%, transparent 25%),
+      linear-gradient(315deg, ${color}08 25%, transparent 25%),
+      linear-gradient(45deg, ${color}06 25%, transparent 25%)
+    `,
+    backgroundSize: '40px 40px',
+    backgroundPosition: '0 0, 0 20px, 20px -20px, 20px 0',
+    animation: 'sim-float 8s ease-in-out infinite',
+  }),
   'zerocrypt-ctf': (color) => ({
     background: `
       repeating-linear-gradient(

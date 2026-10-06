@@ -52,6 +52,7 @@ export default function AppForgeSimulation({ color }: SimulationProps) {
     height: 0,
     rgb: [0, 0, 0] as [number, number, number],
     time: 0,
+    isMobile: false,
     blocks: [] as UIBlock[],
     tokens: [] as CodeToken[],
     codeLines: [] as CodeLine[],
@@ -85,24 +86,47 @@ export default function AppForgeSimulation({ color }: SimulationProps) {
       canvas.style.height = `${rect.height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // Phone — far left
-      s.phoneW = Math.min(s.width * 0.1, 70);
-      s.phoneH = s.phoneW * 2;
-      s.phoneX = s.width * 0.08;
-      s.phoneY = s.height / 2 - s.phoneH / 2;
+      const isMobileLayout = s.width < 500;
+      s.isMobile = isMobileLayout;
 
-      // Laptop — center-left (visible in content area, not behind event image)
-      s.laptopW = Math.min(s.width * 0.3, 220);
-      s.laptopH = s.laptopW * 0.65;
-      s.laptopX = s.width * 0.32;
-      s.laptopY = s.height / 2 - s.laptopH / 2;
+      if (isMobileLayout) {
+        // Mobile: position elements in the LOWER half of the canvas
+        // (the top ~45% is covered by the opaque event image)
+        const contentTop = s.height * 0.50; // start below image
+        const contentH = s.height * 0.50;   // available content height
+
+        // Phone — left side of content area
+        s.phoneW = Math.min(s.width * 0.14, 55);
+        s.phoneH = s.phoneW * 2;
+        s.phoneX = s.width * 0.06;
+        s.phoneY = contentTop + contentH * 0.1;
+
+        // Laptop — right-center of content area, slightly overlapping vertically
+        s.laptopW = Math.min(s.width * 0.42, 170);
+        s.laptopH = s.laptopW * 0.65;
+        s.laptopX = s.width * 0.42;
+        s.laptopY = contentTop + contentH * 0.05;
+      } else {
+        // Desktop: original side-by-side layout
+        // Phone — far left
+        s.phoneW = Math.min(s.width * 0.1, 70);
+        s.phoneH = s.phoneW * 2;
+        s.phoneX = s.width * 0.08;
+        s.phoneY = s.height / 2 - s.phoneH / 2;
+
+        // Laptop — center-left
+        s.laptopW = Math.min(s.width * 0.3, 220);
+        s.laptopH = s.laptopW * 0.65;
+        s.laptopX = s.width * 0.32;
+        s.laptopY = s.height / 2 - s.laptopH / 2;
+      }
 
       // Laptop screen (inset)
       const bezel = s.laptopW * 0.03;
       s.laptopScreenX = s.laptopX + bezel;
       s.laptopScreenY = s.laptopY + bezel;
       s.laptopScreenW = s.laptopW - bezel * 2;
-      s.laptopScreenH = s.laptopH - bezel * 2 - s.laptopW * 0.06; // leave room for bottom bezel/keyboard hint
+      s.laptopScreenH = s.laptopH - bezel * 2 - s.laptopW * 0.06;
 
       initBlocks();
       initCodeLines();
@@ -169,13 +193,16 @@ export default function AppForgeSimulation({ color }: SimulationProps) {
     const initTokens = () => {
       s.tokens = [];
       const count = Math.min(Math.floor(s.width / 50), 14);
+      // On mobile, constrain tokens to the lower half (below the event image)
+      const tokenYStart = s.isMobile ? s.height * 0.45 : 0;
+      const tokenYRange = s.isMobile ? s.height * 0.55 : s.height;
       for (let i = 0; i < count; i++) {
         s.tokens.push({
           x: Math.random() * s.width,
-          y: Math.random() * s.height,
+          y: tokenYStart + Math.random() * tokenYRange,
           text: codeSnippets[Math.floor(Math.random() * codeSnippets.length)],
           speed: 0.12 + Math.random() * 0.25,
-          alpha: 0.03 + Math.random() * 0.06,
+          alpha: s.isMobile ? 0.05 + Math.random() * 0.08 : 0.03 + Math.random() * 0.06,
           size: 8 + Math.random() * 3,
         });
       }
@@ -194,9 +221,10 @@ export default function AppForgeSimulation({ color }: SimulationProps) {
       const cycleT = (s.time % 4) / 4;
 
       // ─── Floating code tokens ───
+      const tokenResetY = s.isMobile ? h * 0.45 : -20;
       for (const t of s.tokens) {
         t.y -= t.speed;
-        if (t.y < -20) { t.y = h + 10; t.x = Math.random() * w; }
+        if (t.y < tokenResetY) { t.y = h + 10; t.x = Math.random() * w; }
         ctx.font = `${t.size}px monospace`;
         ctx.fillStyle = `rgba(${r},${g},${b},${t.alpha})`;
         ctx.fillText(t.text, t.x, t.y);
