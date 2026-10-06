@@ -339,19 +339,32 @@ export default function HeroScrub() {
       // NO anticipatePin — it causes scroll position fights on iOS
       onUpdate: (self) => {
         const progress = self.progress;
+        const prevProgress = lastProgressRef.current;
         
-        if (progress >= 0.98 && lastProgressRef.current < 0.98) {
+        if (progress >= 0.98 && prevProgress < 0.98) {
           window.dispatchEvent(new CustomEvent('hero-scrub-end', { detail: true }));
-        } else if (progress < 0.98 && lastProgressRef.current >= 0.98) {
+        } else if (progress < 0.98 && prevProgress >= 0.98) {
           window.dispatchEvent(new CustomEvent('hero-scrub-end', { detail: false }));
         }
 
         lastProgressRef.current = progress;
-        
-        const currentPercent = Math.round(progress * 100);
-        const lastPercent = Math.round((lastProgressRef.current || 0) * 100);
-        
-        setScrubProgress(progress);
+
+        // ── Throttle React re-renders during intro ──
+        // VigyantraSimulation is visually static for progress < 0.85
+        // (t=0, moveX=0, moveY=0, logoScale=1, logoOpacity=1).
+        // Calling setScrubProgress on every scroll tick forces a full
+        // React re-render cascade: HeroScrub → VigyantraSimulation →
+        // Framer Motion elements → useEffect restarts floating animation.
+        // This adds ~8-12ms of main-thread work per frame. On iOS devices
+        // already near the 16ms budget (concurrent loading screen fade,
+        // navbar transitions, frame decode), this causes the consistent
+        // stutter at frames 18-34.
+        //
+        // Fix: only update state when VigyantraSimulation actually needs
+        // continuous progress (transition starts at 0.85, buffer from 0.75).
+        if (progress >= 0.75 || prevProgress >= 0.75) {
+          setScrubProgress(progress);
+        }
 
         // Text overlay sync
         const tIndex = timeline.findIndex(

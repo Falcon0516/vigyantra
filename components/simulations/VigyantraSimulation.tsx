@@ -40,8 +40,11 @@ export default function VigyantraSimulation({ progress, isLoaded }: VigyantraSim
   }, [isLoaded]);
 
   // Subtle floating animation when not interacting
+  // Use a boolean threshold instead of raw progress to avoid restarting
+  // the animation on every scroll tick (progress changes 60×/sec).
+  const isInTransition = progress >= 0.8;
   useEffect(() => {
-    if (isLoaded && !isHovering && !prefersReducedMotion && progress < 0.8) {
+    if (isLoaded && !isHovering && !prefersReducedMotion && !isInTransition) {
       controls.start({
         y: [0, -6, 0],
         transition: {
@@ -54,7 +57,7 @@ export default function VigyantraSimulation({ progress, isLoaded }: VigyantraSim
       controls.stop();
       controls.start({ y: 0, transition: { duration: 0.5 } });
     }
-  }, [isLoaded, isHovering, controls, prefersReducedMotion, progress]);
+  }, [isLoaded, isHovering, controls, prefersReducedMotion, isInTransition]);
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (prefersReducedMotion) return;
